@@ -1,0 +1,64 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load  static %}
+<head>
+    <meta name="baidu-site-verification" content="nPxypLjNNn"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>增强百科搜索引擎</title>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/index.css' %}" rel="stylesheet" type="text/css"/>
+    <style>
+        .header {
+            width: 100%;
+            height: 60px;
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <div class=" header">
+    </div>
+</header>
+<div id="container">
+    <div id="bd">
+        <div id="main">
+            <h1 class="title">
+                <div class="logo large"></div>
+            </h1>
+            <div class="nav ue-clear">
+                <ul class="searchList">
+                    <li class="searchItem current" data-type="question">百科搜索</li>
+                </ul>
+            </div>
+            <div class="inputArea">
+                <input type="text" class="searchInput"/>
+                <input type="button" class="searchButton" onclick="add_search()"/>
+            </div>
+        </div><!-- End of main -->
+    </div><!--End of bd-->
+
+    <div class="foot">
+        <div class="wrap">
+            <div class="copyright">Copyright &copy;增强百科搜索引擎 版权所有syi@mail.ustc.edu.cn</div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/global.js' %}"></script>
+<script>
+
+    function add_search() {
+        var val = $(".searchInput").val();
+        console.log(val)
+
+        {#window.location.href = search_url + '?q=' + val + "&s_type=" + $(".searchItem.current").attr('data-type')#}
+        //跳转
+        window.location.href = 'search?wd=' + val
+
+    }
+</script>
+</html>
