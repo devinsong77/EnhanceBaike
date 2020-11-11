@@ -1,11 +1,19 @@
 from django.db import models
 
 # Create your models here.
-from django.db import models
+import mongoengine
 
-class Search(models.Model):
-    search_text = models.CharField(max_length=500)
-    search_time = models.DateTimeField('search push time')
+
+class SearchModel(mongoengine.Document):
+    search_text = mongoengine.StringField(max_length=500)
+    #search_time = mongoengine.DateTimeField('search push time')
 
     def __str__(self):
         return self.search_text
+
+
+class TriplesModel(mongoengine.Document):
+    _id = mongoengine.StringField(max_length=500)
+    item_name = mongoengine.StringField(max_length=500)
+    attr = mongoengine.StringField(max_length=500)
+    value = mongoengine.StringField(max_length=500)
