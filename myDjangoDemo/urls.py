@@ -17,11 +17,11 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from show.views import IndexView, SearchView, ResultView
+from show.views import IndexView, SearchView
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name="index"),
     path('search', SearchView.as_view(), name="search"),
-    path('result/', ResultView.as_view(), name="result"),
+    #path('result/', ResultView.as_view(), name="result"),
 ]

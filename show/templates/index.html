@@ -63,12 +63,15 @@
 <script>
 
     function add_search() {
+        var search_url = "{% url 'search' %}"
         var val = $(".searchInput").val();
         console.log(val)
 
         {#window.location.href = search_url + '?q=' + val + "&s_type=" + $(".searchItem.current").attr('data-type')#}
         //跳转
-        window.location.href = 'search?wd=' + val
+        //window.location.href = 'search?wd=' + val
+        window.location.href = search_url + '?wd=' + val
+
 
     }
 </script>
