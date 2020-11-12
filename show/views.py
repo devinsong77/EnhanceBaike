@@ -76,4 +76,6 @@ class SearchView(View):
 class DetailView(View):
 
     def get(self, request):
+        ###
+        a = 1
         return HttpResponse()
