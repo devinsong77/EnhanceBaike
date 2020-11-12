@@ -37,6 +37,17 @@
                 <input type="text" class="searchInput"/>
                 <input type="button" class="searchButton" onclick="add_search()"/>
             </div>
+
+
+            <div class="historyArea">
+                <p class="history">
+                    <label>搜索历史：</label>
+                    {% for search_word in search_list %}
+                        <a href='/search?wd={{ search_word }}'>{{ search_word }}</a>
+                    {% endfor %}
+                </p>
+            </div>
+
         </div><!-- End of main -->
     </div><!--End of bd-->
 

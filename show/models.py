@@ -13,7 +13,7 @@ class SearchModel(mongoengine.Document):
 
 
 class TriplesModel(mongoengine.Document):
-    _id = mongoengine.StringField(max_length=500)
+    triples_id = mongoengine.StringField(max_length=500)
     item_name = mongoengine.StringField(max_length=500)
     attr = mongoengine.StringField(max_length=500)
     value = mongoengine.StringField(max_length=500)
