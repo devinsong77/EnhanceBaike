@@ -1,0 +1,39 @@
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_analyzer": {
+                    "tokenizer": "my_tokenizer"
+                }
+            },
+            "tokenizer": {
+                "my_tokenizer": {
+                    "type": "ngram",
+                    "min_gram": 3,
+                    "max_gram": 3,
+                    "token_chars": [
+                        "letter",
+                        "digit"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "triples_id": {
+                "type": "keyword"
+            },
+            "item_name": {
+                "analyzer": "my_analyzer",
+                "type": "text"
+            },
+            "attr": {
+                "type": "keyword"
+            },
+            "value": {
+                "type": "keyword"
+            }
+        }
+    }
+}

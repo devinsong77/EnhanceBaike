@@ -1,0 +1,44 @@
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "my_analyzer": {
+                    "tokenizer": "my_tokenizer"
+                }
+            },
+            "tokenizer": {
+                "my_tokenizer": {
+                    "type": "ngram",
+                    "min_gram": 1,
+                    "max_gram": 1,
+                    "token_chars": [
+                        "letter",
+                        "digit"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "page_url": {
+                "type": "keyword"
+            },
+            "name": {
+                "type": "keyword"
+            },
+            "baike_id": {
+                "analyzer": "my_analyzer",
+                "type": "text"
+            },
+            "text": {
+                "analyzer": "my_analyzer",
+                "type": "text"
+            },
+            "title": {
+                "analyzer": "my_analyzer",
+                "type": "text"
+            }
+        }
+    }
+}

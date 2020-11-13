@@ -119,7 +119,7 @@
                     {% for hits in all_hits %}
                     <div class="resultItem">
                             <div class="itemHead">
-                                <a href="{{ hits.url }}"  target="_blank" class="title">{% if s_type == "baike"%}{% autoescape off %}{{ hits.baike }}{% endautoescape %} | {% autoescape off %}{{ hits.baike }}{% endautoescape %}
+                                <a href="{{ hits.url }}"  target="_blank" class="title">{% if s_type == "baike"%}{% autoescape off %}{{ hits.title }}{% endautoescape %}
                                 {% else %}{% autoescape off %}{{ hits.title }}{% endautoescape %}{% endif %}</a>
                                 <span class="divsion">-</span>
                                 <span class="fileType">

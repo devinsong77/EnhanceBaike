@@ -11,11 +11,11 @@ from baike_spider.items import *
 class BaikeSpider(scrapy.Spider):
     name = 'baike_spider'
     allowed_domains = ['baike.baidu.com']
-    start_urls = ['https://baike.baidu.com/item/中国']
+    start_urls = ['https://baike.baidu.com/item/中国科学技术大学']
     db = pymongo.MongoClient("mongodb://127.0.0.1:27017/")["db_kg"]
     baike_model = db['baike_model']
     db_triples = db['triples_model']
-    olds = set([item['baike_id'] for item in baike_model.find({}, {'baike_id': 1})])
+    olds = set([item['title'] for item in baike_model.find({}, {'title': 1})])
     if len(olds) > 0:
         start_urls = ['https://baike.baidu.com/item/' + olds.pop()]
 
@@ -24,24 +24,31 @@ class BaikeSpider(scrapy.Spider):
         # print("url:" + page_url)
         item_name = re.sub('/', '', re.sub('https://baike.baidu.com/item/',
                                            '', urllib.parse.unquote(response.url)))
-        # 爬取过的直接忽视
-        if item_name in self.olds:
-            return
 
         # 获取百科标题
-        title = ''.join(response.xpath(
-            '//h1/text()').getall()).replace('/', '')
+        head_title = ''.join(response.xpath(
+            '//dd[@class="lemmaWgt-lemmaTitle-title"]/h1/text()').getall()).replace('/', '')
+        sub_title = ''.join(response.xpath(
+            '//dd[@class="lemmaWgt-lemmaTitle-title"]/h2/text()').getall()).replace('/', '')
+        title = head_title + sub_title
+
+        # 爬取过的直接忽视
+        if title in self.olds:
+            return
+
         # 将网页内容存入mongodb
         try:
             baike_item = BaikeItem()
             baike_item['baike_id'] = item_name
             baike_item['title'] = title
+            baike_item['name'] = head_title
             baike_item['text'] = ''
             # 一段落为单位添加，并在段落结尾添加换行符
-            for para in response.xpath('//div[@class="main-content"]//div[@class="para"]'):
-                texts = para.xpath('./text() | ./a/text()').extract()
+            for para in response.xpath('//div[@class="main-content"]/div[@class="para"] |//div[@class="main_tab main_tab-defaultTab  curTab"]/div[@class="para"] | //div[@class="lemma-summary"]/div[@class="para"]'):
+                #texts = para.xpath('./text() | ./a/text() | ./span/text()').extract()
+                texts = para.xpath('.//text()').extract()
                 for text in texts:
-                    baike_item['text'] += text
+                    baike_item['text'] += text.strip('\n');
                 baike_item['text'] += '<br/>'
             # baike_item['text'] = ''.join(
             #     response.xpath('//div[@class="main-content"]').xpath('//div[@class="para"]//text()').getall())
@@ -51,7 +58,7 @@ class BaikeSpider(scrapy.Spider):
         except pymongo.errors.DuplicateKeyError and elasticsearch.ConflictError:
             pass
         # 更新爬取过的item集合
-        self.olds.add(item_name)
+        self.olds.add(title)
         # 爬取页面内的item
         items = set(response.xpath(
             '//a[contains(@href, "/item/")]/@href').re(r'/item/[A-Za-z0-9%\u4E00-\u9FA5]+'))
@@ -63,7 +70,7 @@ class BaikeSpider(scrapy.Spider):
                 yield response.follow(new_url, callback=self.parse)
 
         # 处理三元组
-        entity = title
+        entity = head_title
         attrs = response.xpath(
             '//dt[contains(@class,"basicInfo-item name")]').getall()
         values = response.xpath(
@@ -81,9 +88,9 @@ class BaikeSpider(scrapy.Spider):
                     '//dd/text()|//dd/a//text()').getall())
                 try:
                     value = value.replace('\n', '')
-                    logging.warning(item_name + ': ' + entity + '_' + attr + '_' + value)
+                    logging.warning(title + ': ' + entity + '_' + attr + '_' + value)
                     triples_item = TriplesItem()
-                    triples_item['triples_id'] = item_name
+                    triples_item['triples_id'] = title
                     triples_item['item_name'] = entity
                     triples_item['attr'] = attr
                     triples_item['value'] = value

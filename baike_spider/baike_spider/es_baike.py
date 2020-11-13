@@ -7,17 +7,18 @@ my_analyzer = analyzer('ik_smart')
 
 class BaikeIndex(Document):
     # keyword不进行分词，Text进行分词
-    baike_id = Text(analyzer="ik_max_word")
-    title = Keyword()
-    text = Text(analyzer="ik_max_word")
+    baike_id = Text(analyzer="ik_smart")
+    title = Text(analyzer="ik_smart")
+    name = Keyword()
+    text = Text(analyzer="ik_smart")
     page_url = Keyword()
     class Index:
         name = 'baike'
 
 
 class TriplesIndex(Document):
-    triples_id = Text(analyzer="ik_max_word")
-    item_name = Keyword()
+    triples_id = Keyword()
+    item_name = Text(analyzer="ik_smart")
     attr = Keyword()
     value = Keyword()
 

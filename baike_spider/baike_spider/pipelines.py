@@ -30,6 +30,7 @@ class BaikePipeline(object):
             baike_index = BaikeIndex()
             baike_index.baike_id = item['baike_id']
             baike_index.title = item['title']
+            baike_index.name = item['name']
             baike_index.text = item['text']
             baike_index.page_url = item['page_url']
             baike_index.save()
@@ -38,6 +39,7 @@ class BaikePipeline(object):
                 {
                     'baike_id': item['baike_id'],
                     'title': item['title'],
+                    'name': item['name'],
                     'text': item['text'],
                     'page_url': item['page_url'],
                 })
