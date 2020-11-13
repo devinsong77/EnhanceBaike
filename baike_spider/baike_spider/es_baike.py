@@ -8,8 +8,9 @@ my_analyzer = analyzer('ik_smart')
 class BaikeIndex(Document):
     # keyword不进行分词，Text进行分词
     baike_id = Text(analyzer="ik_max_word")
+    title = Keyword()
     text = Text(analyzer="ik_max_word")
-
+    page_url = Keyword()
     class Index:
         name = 'baike'
 

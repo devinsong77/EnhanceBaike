@@ -8,7 +8,9 @@ import scrapy
 
 class BaikeItem(scrapy.Item):
     baike_id = scrapy.Field()
+    title = scrapy.Field()
     text = scrapy.Field()
+    page_url = scrapy.Field()
 
 
 class TriplesItem(scrapy.Item):

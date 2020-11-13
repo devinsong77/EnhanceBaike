@@ -18,7 +18,7 @@ class BaikePipeline(object):
 
         self.client = pymongo.MongoClient('localhost')
         self.db = self.client['db_kg']
-        self.baike = self.db['db_baike']
+        self.baike = self.db['baike_model']
         self.triples = self.db['triples_model']
         self.connections = connections.create_connection(hosts=["127.0.0.1:9200"])
         self.my_analyzer = analyzer('ik_smart')
@@ -29,13 +29,17 @@ class BaikePipeline(object):
             # baike存入elasticsearch
             baike_index = BaikeIndex()
             baike_index.baike_id = item['baike_id']
+            baike_index.title = item['title']
             baike_index.text = item['text']
+            baike_index.page_url = item['page_url']
             baike_index.save()
             # baike存入mongodb
             self.baike.insert_one(
                 {
                     'baike_id': item['baike_id'],
+                    'title': item['title'],
                     'text': item['text'],
+                    'page_url': item['page_url'],
                 })
 
         # triples可能不需要索引
