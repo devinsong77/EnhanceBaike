@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>搜索结果| 基于用户兴趣的搜索引擎</title>
+<title>搜索结果| 增强百科搜索</title>
 <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'css/result.css' %}" rel="stylesheet" type="text/css" />
     <style>
@@ -13,59 +13,6 @@
             width: 100%;
             height: 60px;
             background: #fff;
-        }
-
-        .registerbtn {
-            width: 80px;
-            height: 30px;
-            line-height: 30px;
-            margin-top: 4px;
-            background: #616161;
-            margin-left: 2px;
-            text-align: center;
-            float: left;
-            cursor: pointer;
-        }
-
-        .loginbtn {
-            width: 80px;
-            height: 30px;
-            line-height: 30px;
-            margin-top: 4px;
-            background: #616161;
-            margin-left: 2px;
-            text-align: center;
-            float: left;
-            cursor: pointer;
-        }
-        .my-info {
-            width: 160px;
-            height: 30px;
-            line-height: 30px;
-            margin-top: 4px;
-            margin-left: 2px;
-            text-align: center;
-            float: left;
-            cursor: pointer;
-        }
-
-        .fl {
-            float: right !important;
-        }
-
-        .wp {
-            width: 100%;
-            margin: 0 auto;
-            position: relative;
-            clear: both;
-        }
-
-        .header .top {
-            height: 38px;
-            line-height: 38px;
-            background: #3a3a3a;
-            color: #fff;
-            width: 100%;
         }
     </style>
 </head>
@@ -84,7 +31,6 @@
     </div>
     <div class="nav">
     	<ul class="searchList">
-{#            <li class="searchItem {% ifequal s_type "article" %}current{% endifequal %}" data-type="article">伯乐文章</li>#}
             <li class="searchItem {% ifequal s_type "baike" %}current{% endifequal %}" data-type="baike">百度百科</li>
         </ul>
     </div>
@@ -94,23 +40,17 @@
 
                 <div class="subfield">数据来源: <a href="https://baike.baidu.com/">百度百科</a></br>
                 </div>
-{#                <ul class="subfieldContext">#}
-{#                	<li>#}
-{#                    	<span class="name">伯乐在线</span>#}
-{#						<span class="unit">{{jobbole_count}}</span>#}
-{#                    </li>#}
-{#                    <li>#}
-{#                    	<span class="name">知乎</span>#}
-{#						<span class="unit">{{zhihu_count}}</span>#}
-{#                    </li>#}
-{#                </ul>#}
-
-
                 <div class="sideBarShowHide">
                 	<a href="javascript:;" class="icon"></a>
                 </div>
             </div>
             <div class="resultArea">
+                <form action="\search" method="" class="selectType">显示类型：
+                    <input type="radio" name="select" value="all" >全部
+                    <input type="radio" name="select" value="per" >人物
+                    <input type="radio" name="select" value="org" >组织
+                    <input type="radio" name="select" value="loc" >地点
+                </form>
             	<p class="resultTotal">
                 	<span class="info">找到约&nbsp;<span class="totalResult">{{ total_nums }}</span>&nbsp;条结果(用时<span class="time">{{ last_seconds }}</span>秒)，共约<span class="totalPage">{{ page_nums }}</span>页</span>
                 </p>
@@ -123,7 +63,7 @@
                                 {% else %}{% autoescape off %}{{ hits.title }}{% endautoescape %}{% endif %}</a>
                                 <span class="divsion">-</span>
                                 <span class="fileType">
-                                    <span class="label">来源：</span>
+                                    <span class="label">类别：</span>
                                     <span class="value">{{ hits.source_site }}</span>
                                 </span>
 {#                                <span class="dependValue">#}
@@ -135,18 +75,9 @@
                             <div class="itemFoot">
                                 <span class="info">
                                     <label>网站：</label>
-                                    <span class="value">{{ hits.source_site }}</span>
+                                    <span class="value">百度百科</span>
                                 </span>
-{#                                <span class="info">#}
-{#                                    <label>发布时间：</label>#}
-{#                                    <span class="value">{% if s_type == "article" %}#}
-{#                                     {{ hits.create_date }}#}
-{#                                    {% else %}#}
-{#                                        {{ hits.create_date|slice:":-9" }}#}
-{##}
-{#                                    {% endif %}#}
-{#                                    </span>#}
-{#                                </span>#}
+
                             </div>
                         </div>
                     {% endfor %}
@@ -154,40 +85,15 @@
                 <!-- 分页 -->
                 <div class="pagination ue-clear"></div>
                 <!-- 相关搜索 -->
-
-
-
             </div>
 
 
-{#            <div class="historyArea">#}
-{#            	<div class="hotSearch">#}
-{#                	<h6>热门搜索</h6>#}
-{#                    <ul class="historyList">#}
-{#                        {% for search in topn_search %}#}
-{#                        <li><a href="/search?q={{ search }}&s_type=question">{{ search }}</a></li>#}
-{#                        {% endfor %}#}
-{#                    </ul>#}
-{#                </div>#}
-{#                <div class="mySearch">#}
-{#                {% if request.user.is_authenticated %}#}
-{#                                    	<h6>搜索历史</h6>#}
-{#                    <ul class="historyList">#}
-{#                        {% for history in history_list %}#}
-{#                            <li><a href="/search?q={{ history }}&s_type=question">{{ history }}</a></li>#}
-{#                        {% endfor %}#}
-{#                    </ul>#}
-{#                {% else %}#}
-{##}
-{#                {% endif %}#}
-{##}
-{#                </div>#}
-{#            </div>#}
+
         </div><!-- End of main -->
     </div><!--End of bd-->
 </div>
 
-<div id="foot">Copyright &copy;基于用户兴趣的搜索引擎 版权所有</div>
+<div id="foot">Copyright &copy;增强百科搜索 版权所有syi@mail.ustc.edu.cn</div>
 </body>
 <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/global.js' %}"></script>
@@ -195,10 +101,6 @@
 <script type="text/javascript">
     var search_url = "{% url 'search' %}"
 
-	{#$('.searchList').on('click', '.searchItem', function(){#}
-	{#	$('.searchList .searchItem').removeClass('current');#}
-	{#	$(this).addClass('current');#}
-	{#});#}
 
 	$.each($('.subfieldContext'), function(i, item){
 		$(this).find('li:gt(2)').hide().end().find('li:last').show();
@@ -240,6 +142,7 @@
 
     });
 	var key_words = "{{ key_words }}"
+    var pre_type = "{{ pre_type }}"
 	//分页
 	$(".pagination").pagination({{ total_nums }}, {
 		current_page :{{ page|add:'-1' }}, //当前页码
@@ -248,7 +151,7 @@
 		callback :pageselectCallback
 	});
 	function pageselectCallback(page_id, jq) {
-		window.location.href=search_url+'?wd='+key_words+'&p='+(page_id+1)
+		window.location.href=search_url+'?wd='+key_words+'&p='+(page_id+1) + '&type=' + pre_type
 	}
 
 	setHeight();
@@ -262,31 +165,22 @@
 		}
 	}
 </script>
-{#<script type="text/javascript">#}
-{#    $('.searchList').on('click', '.searchItem', function(){#}
-{#        $('.searchList .searchItem').removeClass('current');#}
-{#        $(this).addClass('current');#}
-{#    });#}
-{##}
-{#    // 联想下拉显示隐藏#}
-{#    $('.searchInput').on('focus', function(){#}
-{#        $('.dataList').show()#}
-{#    });#}
-{##}
-{#    // 联想下拉点击#}
-{#    $('.dataList').on('click', 'li', function(){#}
-{#        var text = $(this).text();#}
-{#        $('.searchInput').val(text);#}
-{#        $('.dataList').hide()#}
-{#    });#}
-{##}
-{#    hideElement($('.dataList'), $('.searchInput'));#}
-{#</script>#}
+
 <script>
 
     function add_search(){
         var val = $(".searchInput").val();
         window.location.href=search_url+'?wd='+val
     }
+
+</script>
+<script type="text/javascript">
+        var key_words = "{{ key_words }}"
+        $(function() {
+            $(".selectType :radio").click(function() {
+                window.location.href=search_url+'?wd='+key_words + '&type=' + $(this).val()
+            });
+        });
+
 </script>
 </html>

@@ -2,6 +2,7 @@
 import urllib
 import re
 import pymongo
+import scrapy
 from scrapy.selector import Selector
 import logging
 import elasticsearch

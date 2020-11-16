@@ -48,11 +48,14 @@ html{*overflow:auto;}
 #main.sideBarHide .sideBar .sideBarShowHide a:hover{*background-position:0 -31px;}
 #main.sideBarHide .sideBar .sideBarShowHide{background:none;}
 
+
 .resultArea{float:left;width:100%;}
 .resultArea .resultTotal{position:relative;padding-left:30px;margin-bottom:20px;}
 .resultArea .resultTotal .info{color:#9a9a9a;}
 .resultArea .resultTotal .orderOpt{position:absolute;right:50px;}
 .resultArea .resultTotal .orderOpt a{margin-right:10px;color:#0080cc;}
+
+.resultArea .selectType{position:relative;padding-left:30px;margin-bottom:20px;}
 
 /*搜索结果列表区域*/
 .resultArea .resultList{padding-left:30px;}

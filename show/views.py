@@ -35,6 +35,9 @@ class SearchView(View):
     my_eManager = ElasticsearchManager()
 
     def get(self, request):
+        # select = request.POST['select']
+        # lo
+        b_type = request.GET.get("type", "all")
         key_word = request.GET.get("wd", "")
         page = request.GET.get("p", "1")
         try:
@@ -53,8 +56,8 @@ class SearchView(View):
 
         # logger.info("use time:%f", time.clock() - start)
         start_time = datetime.now()
-        res = self.my_eManager.search(key_word, page)
-        hit_list = self.my_eManager.get_hit_list(res)
+        res = self.my_eManager.search(key_word, page, b_type)
+        hit_list = self.my_eManager.get_hit_list(res, key_word)
         end_time = datetime.now()
         total_nums = int(res["hits"]["total"]["value"])
         last_seconds = (end_time - start_time).total_seconds()
@@ -63,9 +66,11 @@ class SearchView(View):
             page_nums = int(total_nums / 10) + 1
         else:
             page_nums = int(total_nums / 10)
+
         return render(request, "result.html", {"page": page,
                                                "all_hits": hit_list,
                                                "key_words": key_word,
+                                               "pre_type": b_type,
                                                "total_nums": total_nums,
                                                "page_nums": page_nums,
                                                "last_seconds": last_seconds,

@@ -27,6 +27,9 @@
             "name": {
                 "type": "keyword"
             },
+            "type": {
+                "type": "keyword"
+            },
             "baike_id": {
                 "analyzer": "my_analyzer",
                 "type": "text"

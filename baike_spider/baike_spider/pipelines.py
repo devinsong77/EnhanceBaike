@@ -11,7 +11,7 @@ from baike_spider.es_baike import TriplesIndex, BaikeIndex
 from baike_spider.items import BaikeItem
 from baike_spider.items import TriplesItem
 from elasticsearch_dsl import connections, analyzer
-
+from baike_spider.LACManager import LACManager
 
 class BaikePipeline(object):
     def __init__(self):
@@ -22,6 +22,7 @@ class BaikePipeline(object):
         self.triples = self.db['triples_model']
         self.connections = connections.create_connection(hosts=["127.0.0.1:9200"])
         self.my_analyzer = analyzer('ik_smart')
+        self.lac = LACManager()
 
     def process_item(self, item, spider):
         # 通过isinstance来区分item
@@ -32,6 +33,8 @@ class BaikePipeline(object):
             baike_index.title = item['title']
             baike_index.name = item['name']
             baike_index.text = item['text']
+            predict = self.lac.predict(item['name'])
+            baike_index.type = predict
             baike_index.page_url = item['page_url']
             baike_index.save()
             # baike存入mongodb
@@ -40,6 +43,7 @@ class BaikePipeline(object):
                     'baike_id': item['baike_id'],
                     'title': item['title'],
                     'name': item['name'],
+                    'type': predict,
                     'text': item['text'],
                     'page_url': item['page_url'],
                 })
