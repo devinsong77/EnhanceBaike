@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from elasticsearch import Elasticsearch
 
 
@@ -20,6 +22,7 @@ class ElasticsearchManager:
             response = self.client.search(
                 index="baike",
                 request_timeout=60,
+                scroll="1m",
                 body={
                     "query": {
                         "bool": {
@@ -42,6 +45,7 @@ class ElasticsearchManager:
             response = self.client.search(
                 index="baike",
                 request_timeout=60,
+                scroll="1m",
                 # elasticsearch复合查询
                 # 相当于 ((type== type) and (keyword in text) or (keyword in name))
                 body={
@@ -77,6 +81,7 @@ class ElasticsearchManager:
                         }
                     }
                     ,
+
                     "from": (page - 1) * 10,
                     "size": 10,
                     "highlight": {
@@ -87,6 +92,41 @@ class ElasticsearchManager:
                             "text": {},
                         }}})
         return response
+
+    # 采用scroll方式
+    def get_all_es_data(self, keyword, type):
+        page_list = []
+        page = self.search(keyword, 1, type)
+        page_list.append(page)
+        #print(page)
+        scroll_id = page['_scroll_id']
+        print(scroll_id)
+        scroll_size = page['hits']['total']['value']
+        print(scroll_size)
+        try:
+            while (scroll_size > 0):
+                print("-----------------")
+                print(scroll_size)
+                time1 = datetime.now()
+                page = self.client.scroll(
+                    #index="baike",
+                    scroll="1m",
+                    #body=query,
+                    scroll_id=scroll_id,
+                )
+                page_list.append(page)
+                # 更新 scroll ID
+                scroll_id = page['_scroll_id']
+                # Get the number of results that we returned in the last scroll
+                scroll_size = len(page['hits']['hits'])
+                print(scroll_size)
+                print("----------")
+                print((datetime.now() - time1).microseconds)
+            return page_list
+        except :
+            print("@@@@@@@@@@@@@@@")
+            return None
+
 
     # 调整搜索数据格式
     def get_hit_list(self, res, keyword):
@@ -119,13 +159,17 @@ class ElasticsearchManager:
 
 if __name__ == '__main__':
     e = ElasticsearchManager()
+    time1 = datetime.now()
     res = e.search("中国科学技术大学", 1, "per")
-
+    print((datetime.now() - time1).microseconds)
     # 这里要加一个判断逻辑，判断是否有直接的搜索
     hi_list = e.get_hit_list(res, "中国科学技术大学")
-    print("res ***********************")
-    print(res)
-    print(res['hits'])
+    hi_lsit_sc = e.get_all_es_data("中国科学技术大学", "per")
     print(len(hi_list))
-    print(res['hits']['total']['value'])
+    print(len(hi_lsit_sc))
+    #print("res ***********************")
+    #print(res)
+   # print(res['hits'])
+    #print(len(hi_list))
+    #print(res['hits']['total']['value'])
     # print(res)
