@@ -12,23 +12,24 @@ from baike_spider.items import *
 class BaikeSpider(scrapy.Spider):
     name = 'baike_spider'
     allowed_domains = ['baike.baidu.com']
-    start_urls = ['https://baike.baidu.com/item/中国科学技术大学']
+    start_urls = ['https://baike.baidu.com/item/清华大学']
     db = pymongo.MongoClient("mongodb://127.0.0.1:27017/")["db_kg"]
     baike_model = db['baike_model']
     db_triples = db['triples_model']
     olds = set([item['title'] for item in baike_model.find({}, {'title': 1})])
-    if len(olds) > 0:
-        start_urls = ['https://baike.baidu.com/item/' + olds.pop()]
+
+    # if len(olds) > 0:
+    #     start_urls = ['https://baike.baidu.com/item/' + olds.pop()]
 
     def parse(self, response):
         page_url = response.request.url
-        # print("url:" + page_url)
         item_name = re.sub('/', '', re.sub('https://baike.baidu.com/item/',
                                            '', urllib.parse.unquote(response.url)))
 
         # 获取百科标题
         head_title = ''.join(response.xpath(
             '//dd[@class="lemmaWgt-lemmaTitle-title"]/h1/text()').getall()).replace('/', '')
+        # 获取副标题
         sub_title = ''.join(response.xpath(
             '//dd[@class="lemmaWgt-lemmaTitle-title"]/h2/text()').getall()).replace('/', '')
         title = head_title + sub_title
@@ -44,15 +45,12 @@ class BaikeSpider(scrapy.Spider):
             baike_item['title'] = title
             baike_item['name'] = head_title
             baike_item['text'] = ''
-            # 一段落为单位添加，并在段落结尾添加换行符
+            # 以段落为单位添加，并在段落结尾添加换行符
             for para in response.xpath('//div[@class="main-content"]/div[@class="para"] |//div[@class="main_tab main_tab-defaultTab  curTab"]/div[@class="para"] | //div[@class="lemma-summary"]/div[@class="para"]'):
-                #texts = para.xpath('./text() | ./a/text() | ./span/text()').extract()
                 texts = para.xpath('.//text()').extract()
                 for text in texts:
                     baike_item['text'] += text.strip('\n');
                 baike_item['text'] += '<br/>'
-            # baike_item['text'] = ''.join(
-            #     response.xpath('//div[@class="main-content"]').xpath('//div[@class="para"]//text()').getall())
             baike_item['page_url'] = page_url
             yield baike_item
 

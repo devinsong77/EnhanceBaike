@@ -4,7 +4,7 @@ connections.create_connection(hosts=["127.0.0.1:9200"])
 
 my_analyzer = analyzer('ik_smart')
 
-
+# elasticsearch初始化
 class BaikeIndex(Document):
     # keyword不进行分词，Text进行分词
     baike_id = Text(analyzer="ik_smart")

@@ -1,6 +1,8 @@
 @charset "utf-8";
 html{*overflow:auto;}
-#main{width:730px;margin:75px auto 0;}
+/*margin:75px auto 0*/
+/*position: absolute;left: 50%;top: 50%;margin: -50px 0 0 -50px;*/
+#main{width:730px;margin:75px auto 0}
 #main h1.title{width:600px;}
 #bd{margin-bottom:20px;}
 .logo.large{margin:0px auto 10px auto;width:342px;height:144px;background: url(../images/logo.png) no-repeat center center;text-align:center;}

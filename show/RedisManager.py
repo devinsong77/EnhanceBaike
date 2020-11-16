@@ -1,15 +1,20 @@
 from django.conf import settings
-from django.core.cache import cache
+import redis
 
 
 class RedisManager:
 
-    def __init__(self, key):
-        self.key = key
+    def __init__(self):
+        self.redis_cli = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
-    def read_from_cache(self):
-        value = cache.get(self.key)
-        return value
+    # 获取集合长度
+    def get_set_len(self, key):
+        return self.redis_cli.scard(key)
 
-    def write_to_cache(self, value):
-        cache.set(self.key, value, settings.CUBES_REDIS_TIMEOUT)
+    # 读取数据
+    def read_from_set(self, key):
+        return self.redis_cli.smembers(key)
+
+    # 数据写入
+    def write_to_set(self, key, value):
+        self.redis_cli.sadd(key, value)

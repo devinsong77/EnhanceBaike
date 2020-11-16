@@ -1,27 +1,21 @@
-from LAC import LAC
 from django.shortcuts import render
 from django.views.generic.base import View, logger
-# Create your views here.
-from django.http import HttpResponse
 from datetime import datetime
-import redis
+from show.RedisManager import RedisManager
 
 # redis连接
 from show.ElasticsearchManager import ElasticsearchManager
 
-redis_cli = redis.Redis(host='localhost', port=6379, decode_responses=True)
-lac = LAC(mode='lac')
-
 
 class IndexView(View):
+    # redis管理类对象
+    rm = RedisManager()
 
-    @staticmethod
-    def get(request):
+    def get(self, request):
         # scard集合内元素数量
         ser_list = []
-        if redis_cli.scard('search_list') > 0:
-            # logger.info("REDISSSSSSSSSSSSSSS")
-            search_ser = redis_cli.smembers('search_list')
+        if self.rm.get_set_len('search_list') > 0:
+            search_ser = self.rm.read_from_set('search_list')
             for index, item in enumerate(list(search_ser)):
                 if index >= 10:
                     break
@@ -31,35 +25,34 @@ class IndexView(View):
 
 
 class SearchView(View):
-    my_labels = ['PER', 'LOC', 'ORG']
+    # elasticsearch管理类对象
     my_eManager = ElasticsearchManager()
+    # redis管理类对象
+    rm = RedisManager()
 
     def get(self, request):
-        # select = request.POST['select']
-        # lo
+        # get方法获取url参数
         b_type = request.GET.get("type", "all")
         key_word = request.GET.get("wd", "")
         page = request.GET.get("p", "1")
+
         try:
             page = int(page)
         except BaseException:
             page = 1
 
-        lac_result = lac.run(key_word)
-        words = lac_result[0]
-        labels = lac_result[1]
+        # 写入redis
+        self.rm.write_to_set('search_list', key_word)
 
-        for (word, label) in zip(words, labels):
-            if label in self.my_labels:
-                # 写入redis
-                redis_cli.sadd('search_list', word)
-
-        # logger.info("use time:%f", time.clock() - start)
         start_time = datetime.now()
+        # elasticsearch搜索
         res = self.my_eManager.search(key_word, page, b_type)
+        # 搜索结果调整
         hit_list = self.my_eManager.get_hit_list(res, key_word)
         end_time = datetime.now()
+        # 计算结果总数
         total_nums = int(res["hits"]["total"]["value"])
+
         last_seconds = (end_time - start_time).total_seconds()
         # 计算出总页数
         if (page % 10) > 0:
@@ -76,11 +69,3 @@ class SearchView(View):
                                                "last_seconds": last_seconds,
                                                "s_type": "baike",
                                                })
-
-
-class DetailView(View):
-
-    def get(self, request):
-        ###
-        a = 1
-        return HttpResponse()

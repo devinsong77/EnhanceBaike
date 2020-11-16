@@ -6,7 +6,6 @@ import mongoengine
 
 class SearchModel(mongoengine.Document):
     search_text = mongoengine.StringField(max_length=500)
-    #search_time = mongoengine.DateTimeField('search push time')
 
     def __str__(self):
         return self.search_text
