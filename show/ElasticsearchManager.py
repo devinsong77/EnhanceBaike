@@ -98,14 +98,10 @@ class ElasticsearchManager:
         page_list = []
         page = self.search(keyword, 1, type)
         page_list.append(page)
-        #print(page)
         scroll_id = page['_scroll_id']
-        print(scroll_id)
         scroll_size = page['hits']['total']['value']
-        print(scroll_size)
         try:
             while (scroll_size > 0):
-                print("-----------------")
                 print(scroll_size)
                 time1 = datetime.now()
                 page = self.client.scroll(
@@ -119,12 +115,9 @@ class ElasticsearchManager:
                 scroll_id = page['_scroll_id']
                 # Get the number of results that we returned in the last scroll
                 scroll_size = len(page['hits']['hits'])
-                print(scroll_size)
-                print("----------")
                 print((datetime.now() - time1).microseconds)
             return page_list
         except :
-            print("@@@@@@@@@@@@@@@")
             return None
 
 
@@ -137,7 +130,6 @@ class ElasticsearchManager:
             try:
                 hit_dict["baike_id"] = item["_source"]["title"]
                 hit_dict["name"] = item["_source"]["name"]
-
                 if "text" in item["highlight"]:
                     hit_dict["text"] = "".join(
                         item["highlight"]["text"][:200])
@@ -167,9 +159,3 @@ if __name__ == '__main__':
     hi_lsit_sc = e.get_all_es_data("中国科学技术大学", "per")
     print(len(hi_list))
     print(len(hi_lsit_sc))
-    #print("res ***********************")
-    #print(res)
-   # print(res['hits'])
-    #print(len(hi_list))
-    #print(res['hits']['total']['value'])
-    # print(res)
