@@ -4,11 +4,11 @@
 
 ​		本项目解决了百科无法搜索与搜索词条相关联词条的痛点，使用scrapy爬虫框架对百度百科进行爬取，使用elasticsearch搜索服务器实现了在大规模的文本数据中快速搜索相关词条，并且使用redis缓存数据库实现了历史搜索功能，使用NER命名实体识别技术完成了对词条类别的标注，最后使用django web框架完成了项目前端的展示。
 
-![image-20201116215356886](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116215356886.png)
+![image-20201116215356886](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116215356886.png)
 
-![image-20201116215410937](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116215410937.png)
+![image-20201116215410937](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116215410937.png)
 
-![image-20201116215432648](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116215432648.png)
+![image-20201116215432648](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116215432648.png)
 
 ## 功能介绍
 
@@ -73,23 +73,23 @@
 
 ### 1. 爬虫部分
 
-![image-20201116221827672](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116221827672.png)
+![image-20201116221827672](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116221827672.png)
 
 ​		使用scrapy框架对百科网页进行爬取，先指定开始爬取词条，检索当前词条内的所有链接词条，然后再爬取链接词条，依此进行实现递归的爬取，爬取效率约10w词条/h
 ​		**具体细节见baike_spider.py代码，已经写好详细注释**
 ​		通过scrapy 框架的pipeline实现存储与爬取的异步进行，从而提升爬取效率，将生成items存入elasticsearch搜索服务器与mongodb数据库中，以便后续的数据检索。
 
-![image-20201116222749887](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116222749887.png)
+![image-20201116222749887](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116222749887.png)
 
 baike_id为百科对应唯一Id，title为百科标题， name为百科词条名，type为LAC预测的词条类型，text为词条文本，page_url为百科url
 
 ### 2.搜索部分
 
-![image-20201116223006162](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116223006162.png)
+![image-20201116223006162](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116223006162.png)
 
 ​		搜索服务器共两个index，triples为百科信息三元组，本项目暂时用不到，baike为百科信息索引，里面维护了百科name与百科text等，搜索功能的实现依托于elasticsearch搜索服务器。
 
-![image-20201116223220122](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116223220122.png)
+![image-20201116223220122](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116223220122.png)
 
 ​		搜索功能实现了数十万级数据文本查询时间小于0.1s，可以按照LAC预测类别进行检索，搜索结果中有直接相关词条则第一条为直接相关词条，其余词条按照关联度进行排序。
 ​		**具体实现细节见ElasticsearchManager.py**
@@ -110,7 +110,7 @@ LAC全称Lexical Analysis of Chinese，是百度自然语言处理部研发的�
 
 - **支持移动端**: 定制超轻量级模型，体积仅为2M，主流千元手机单线程性能达200QPS，满足大多数移动端应用的需求，同等体积量级效果业内领先。
 
-  ![image-20201116223812646](C:\Users\89252\AppData\Roaming\Typora\typora-user-images\image-20201116223812646.png)
+  ![image-20201116223812646](https://github.com/vinsssss/EnhanceBaike\pictures\image-20201116223812646.png)
 
   ​														LAC模型采用双层双向GRU+CRF网络结构
 
